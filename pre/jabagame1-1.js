@@ -2,8 +2,11 @@ let keysDown;
 let mousePos = {x:0, y:0};
 let mouseDown = [0, 0, 0]
 export class Init{
-    constructor(canvas) {
+    constructor(canvas, ctx) {
         keysDown = {};
+        this.ctx = ctx;
+        this.width = canvas.width;
+        this.height = canvas.height;
 
         window.addEventListener("keydown", function (e) {
             keysDown[e.keyCode] = true;
@@ -30,6 +33,15 @@ export class Init{
             mouseDown[evt.button] = 0;
         }
     }
+
+    lerp(position, target, velocity){
+        const angle = Math.atan2(target.y - position.y, target.x - position.x);
+        return {
+            x: Math.cos(angle) * velocity,
+            y: Math.sin(angle) * velocity
+        }
+    }
+
     keysDown(){return keysDown}
     mousePos(){return mousePos}
     mouseButtonDown(){return mouseDown}

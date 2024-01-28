@@ -1,8 +1,9 @@
-import * as jabaGame from "./jabagame.js";
+import * as jabaGame from "./jabagame1-1.js";
 import Bullet from "./bullet.js";
 
 export default class Player{
-    constructor(ctx, x, y) {
+    constructor(ctx, x, y, jaba) {
+        this.jaba = jaba;
         this.x = x;
         this.y = y;
         this.ctx = ctx;
@@ -10,8 +11,7 @@ export default class Player{
         this.mouse = false;
 
         this.rect = new jabaGame.Rect(ctx, x, y, 20, 20, "green")
-        addEventListener('click', ()=>{this.createBullet()})
-
+        addEventListener('click', (event)=>{this.createBullet(event)})
 
     }
 
@@ -22,9 +22,10 @@ export default class Player{
         this.bullets.map(bullet=>bullet.draw())
     }
 
-    createBullet(){
+    createBullet(event){
         console.log(this.mouse)
-        this.bullets.push(new Bullet(this.ctx, this.rect.center()))
+        // const angle = Math.atan2()
+        this.bullets.push(new Bullet(this.jaba, this.rect.center(), this.mouse))
     }
 
 }
