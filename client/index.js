@@ -13,10 +13,10 @@ const ctx = canvas.getContext("2d");
 let jaba = new jabaGame.Init(canvas, ctx);
 let player = new Player(ctx, position);
 let players = [];
+let cameraPosition = {'x':jaba.width/2, 'y':jaba.height/2};
 
-
-
-const object = new jabaGame.Rect(ctx, 400 + position.x, 600 + position.y, 100, 100, 'green')
+console.log(cameraPosition)
+const object = new jabaGame.Rect(ctx, 200 + cameraPosition.x - position.x, 200 + cameraPosition.y - position.y, 30, 30, 'green')
 const background = new jabaGame.Rect(ctx, 0, 0, jaba.width, jaba.height, 'white')
 
 socket.on('connect', ()=> {
@@ -36,18 +36,18 @@ socket.on('connect', ()=> {
         if (difference > 1000 / fps){
             background.draw()
 
-
             Object.keys(players).forEach(id=>{
                 if (id !== socket.id){
                     let pos = players[id];
-                    const p = new jabaGame.Rect(ctx, pos.x, pos.y, 100, 100, 'red');
+                    const p = new jabaGame.Rect(ctx, pos.x + cameraPosition.x - position.x, pos.y + cameraPosition.y - position.y, 30, 30, 'red');
+                    console.log(pos.x)
                     p.draw()
                 }
             })
             socket.emit('getPlayers', socket.id)
             count++
-            object.x = position.x + 60;
-            object.y = position.y
+            object.x = 200 + cameraPosition.x - position.x;
+            object.y = 200 + cameraPosition.y - position.y;
 
             object.draw()
             position = player.main(jaba, position, socket)
