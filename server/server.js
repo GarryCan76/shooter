@@ -6,10 +6,10 @@ const mongoose = require('mongoose');
 let db = undefined;
 
 app.use(express.static('client'))
-const hostname = 'localhost';
-// const hostname = '192.168.2.6';
+// const hostname = 'localhost';
+const hostname = '10.52.9.192';
 
-const port = process.env.PORT||3030;
+const port = process.env.PORT||8181;
 
 //attach http server to the socket io
 const io = require('socket.io')(http);
@@ -38,12 +38,19 @@ let players = {};
 io.on('connection', socket =>{
     users++
     players[socket.id] = {'x':0, 'y':0};
-    console.log(players)
+
+    //player Movement
     socket.on('playerMove', position=>{
         players[socket.id] = position;
     })
     socket.on('getPlayers', id=>{
         socket.emit('getPlayersResponse', players)
+    })
+
+    //bulletsHandler
+    socket.on('newBullet', bullet=>{
+        console.log(bullet)
+        socket.broadcast.emit('sendBullet', bullet)
     })
 
 

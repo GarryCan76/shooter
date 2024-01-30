@@ -7,6 +7,7 @@ export class Init{
         this.ctx = ctx;
         this.width = canvas.width;
         this.height = canvas.height;
+        this.cameraPosition = {'x':0, 'y':0};
 
         window.addEventListener("keydown", function (e) {
             keysDown[e.keyCode] = true;
@@ -25,28 +26,27 @@ export class Init{
                 y: evt.clientY - rect.top
             };
         }
-        mouseDown = [0, 0, 0]
+        mouseDown = [false, false, false]
         document.body.onmousedown = function(evt) {
-            mouseDown[evt.button] = 1;
+            mouseDown[evt.button] = true;
         }
         document.body.onmouseup = function(evt) {
-            mouseDown[evt.button] = 0;
+            mouseDown[evt.button] = false;
         }
     }
 
-    lerp(position, target, velocity){
-        const angle = Math.atan2(target.y - position.y, target.x - position.x);
-        return {
-            x: Math.cos(angle) * velocity,
-            y: Math.sin(angle) * velocity
-        }
-    }
 
     keysDown(){return keysDown}
     mousePos(){return mousePos}
     mouseButtonDown(){return mouseDown}
 }
-
+export function lerp(position, target, velocity){
+    const angle = Math.atan2(target.y - position.y, target.x - position.x);
+    return {
+        x: Math.cos(angle) * velocity,
+        y: Math.sin(angle) * velocity
+    }
+}
 
 export class Rect{
     constructor(surface, x, y, width, height, color) {

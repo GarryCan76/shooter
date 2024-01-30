@@ -1,6 +1,7 @@
 import * as jabaGame from './js/jabagame1-1.js';
-
+import BulletsHandler from "./js/bulletsHandler.js";
 import Player from "./js/player.js";
+
 const socket = io();
 
 let canvas = document.getElementById('canvas');
@@ -11,24 +12,26 @@ canvas.height = body.offsetHeight;
 let position = {'x':0, 'y':0};
 const ctx = canvas.getContext("2d");
 let jaba = new jabaGame.Init(canvas, ctx);
+
+//player
 let player = new Player(ctx, position);
 let players = [];
-let cameraPosition = {'x':jaba.width/2, 'y':jaba.height/2};
 
-console.log(cameraPosition)
-const object = new jabaGame.Rect(ctx, 200 + cameraPosition.x - position.x, 200 + cameraPosition.y - position.y, 30, 30, 'green')
+//bulletsHandler
+let bulletsHandler = new BulletsHandler(jaba, socket);
+
+const object = new jabaGame.Rect(ctx, 200 + jaba.cameraPosition.x, 200 + jaba.cameraPosition.y, 30, 30, 'green')
 const background = new jabaGame.Rect(ctx, 0, 0, jaba.width, jaba.height, 'white')
 
 socket.on('connect', ()=> {
     socket.on('getPlayersResponse', playersData=>{
         players = playersData;
-    })
-
+    });
     //game loop
     let then = Date.now();
     let now;
     let count = 0;
-    let fps = 30;
+    let fps = 60;
     function animate(){
         //time handler
         now = Date.now();
@@ -39,18 +42,21 @@ socket.on('connect', ()=> {
             Object.keys(players).forEach(id=>{
                 if (id !== socket.id){
                     let pos = players[id];
-                    const p = new jabaGame.Rect(ctx, pos.x + cameraPosition.x - position.x, pos.y + cameraPosition.y - position.y, 30, 30, 'red');
-                    console.log(pos.x)
+                    const p = new jabaGame.Rect(ctx, pos.x + jaba.cameraPosition.x, pos.y + jaba.cameraPosition.y, 30, 30, 'red');
                     p.draw()
                 }
             })
             socket.emit('getPlayers', socket.id)
-            count++
-            object.x = 200 + cameraPosition.x - position.x;
-            object.y = 200 + cameraPosition.y - position.y;
-
+            object.x = 100 + jaba.cameraPosition.x;
+            object.y = 100 + jaba.cameraPosition.y;
+            position = player.main(jaba, position, socket, bulletsHandler, count)
+            bulletsHandler.drawBullets(jaba)
             object.draw()
-            position = player.main(jaba, position, socket)
+
+            //updating vars
+            count++
+            jaba.cameraPosition = {'x':jaba.width/2 - position.x, 'y':jaba.height/2 - position.y};
+
             then = now;
         }
         requestAnimationFrame(animate);
