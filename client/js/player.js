@@ -4,18 +4,23 @@ export default class Player{
     constructor(ctx, position) {
         this.ctx = ctx;
         this.position = {'x':0, 'y':0};
-        this.playerRect = new jabaGame.Rect(ctx, position.x, position.y, 30, 30, 'blue')
+        this.color = 'blue';
+        this.playerRect = new jabaGame.Rect(ctx, position.x, position.y, 30, 30, this.color)
         this.shotDelay = 0;
         this.health = 100;
     }
 
-    main(jaba, position, socket, bulletsHandler, count){
+    createRect(){
+        this.playerRect = new jabaGame.Rect(this.ctx, this.position.x, this.position.y, 30, 30, this.color);
+    }
+
+    main(jaba, position, socket, bulletsHandler, tick){
         this.move(jaba.keysDown(), position, socket)
         this.playerRect.x = jaba.width / 2;
         this.playerRect.y = jaba.height / 2;
-        this.playerRect.draw()
-        if(jaba.mouseButtonDown()[0] && this.shotDelay + 15 < count){
-            this.shotDelay = count;
+        this.playerRect.draw();
+        if(jaba.mouseButtonDown()[0] && this.shotDelay + 15 < tick){
+            this.shotDelay = tick;
             bulletsHandler.createBullet(jaba, socket, position)
         }
 
@@ -55,7 +60,6 @@ export default class Player{
             pressed = true;
         }
         if (pressed){
-            console.log(position)
             socket.emit('playerMove', position);
         }
         return position;

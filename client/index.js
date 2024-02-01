@@ -43,6 +43,7 @@ socket.on('connect', ()=> {
                 if (id !== socket.id){
                     let pos = players[id];
                     const p = new jabaGame.Rect(ctx, pos.x + jaba.cameraPosition.x, pos.y + jaba.cameraPosition.y, 30, 30, 'red');
+
                     p.draw()
                 }
             })

@@ -31,10 +31,11 @@ export default class BulletsHandler {
             bullet.bulletRect.x = bullet.position.x + jaba.cameraPosition.x;
             bullet.bulletRect.y = bullet.position.y + jaba.cameraPosition.y;
 
-            console.log(player.playerRect)
-            console.log(bullet.bulletRect)
-            if (player.playerRect.collideRect(bulletCollision)){
-                console.log('hit')
+            // console.log(player.playerRect)
+            // console.log(bullet.bulletRect)
+            if (player.playerRect.collideRect(bullet.bulletRect.rect())){
+                player.color = 'purple';
+                player.createRect()
             }
 
             bullet.bulletRect.draw()
