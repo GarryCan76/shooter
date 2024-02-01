@@ -6,6 +6,7 @@ export default class Player{
         this.position = {'x':0, 'y':0};
         this.playerRect = new jabaGame.Rect(ctx, position.x, position.y, 30, 30, 'blue')
         this.shotDelay = 0;
+        this.health = 100;
     }
 
     main(jaba, position, socket, bulletsHandler, count){
@@ -17,7 +18,17 @@ export default class Player{
             this.shotDelay = count;
             bulletsHandler.createBullet(jaba, socket, position)
         }
+
+        this.healthHandler(jaba)
+
         return position;
+    }
+
+    healthHandler(jaba){
+        let healthBarRect = new jabaGame.Rect(jaba.ctx, 0, 0, 100, 30, 'green')
+
+        healthBarRect.draw()
+
     }
 
     move(keysDown, position, socket){

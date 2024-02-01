@@ -30,7 +30,7 @@ socket.on('connect', ()=> {
     //game loop
     let then = Date.now();
     let now;
-    let count = 0;
+    let tick = 0;
     let fps = 60;
     function animate(){
         //time handler
@@ -49,14 +49,14 @@ socket.on('connect', ()=> {
             socket.emit('getPlayers', socket.id)
             object.x = 100 + jaba.cameraPosition.x;
             object.y = 100 + jaba.cameraPosition.y;
-            position = player.main(jaba, position, socket, bulletsHandler, count)
-            bulletsHandler.drawBullets(jaba)
+            position = player.main(jaba, position, socket, bulletsHandler, tick)
+            bulletsHandler.drawBullets(jaba, player)
             object.draw()
 
             //updating vars
-            count++
+            tick++
             jaba.cameraPosition = {'x':jaba.width/2 - position.x, 'y':jaba.height/2 - position.y};
-
+            jaba.tick = tick;
             then = now;
         }
         requestAnimationFrame(animate);

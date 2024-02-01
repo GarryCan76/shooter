@@ -49,7 +49,6 @@ io.on('connection', socket =>{
 
     //bulletsHandler
     socket.on('newBullet', bullet=>{
-        console.log(bullet)
         socket.broadcast.emit('sendBullet', bullet)
     })
 

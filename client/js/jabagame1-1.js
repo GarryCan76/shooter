@@ -8,6 +8,7 @@ export class Init{
         this.width = canvas.width;
         this.height = canvas.height;
         this.cameraPosition = {'x':0, 'y':0};
+        this.tick = 0;
 
         window.addEventListener("keydown", function (e) {
             keysDown[e.keyCode] = true;
