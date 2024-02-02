@@ -2,6 +2,8 @@ import * as jabaGame from './jabagame1-1.js';
 
 export default class Player{
     constructor(ctx, position) {
+        this.name = Math.floor(Math.random() * 1000)
+        console.log(this.name)
         this.ctx = ctx;
         this.position = {'x':0, 'y':0};
         this.color = 'blue';
@@ -21,7 +23,7 @@ export default class Player{
         this.playerRect.draw();
         if(jaba.mouseButtonDown()[0] && this.shotDelay + 15 < tick){
             this.shotDelay = tick;
-            bulletsHandler.createBullet(jaba, socket, position)
+            bulletsHandler.createBullet(jaba, socket, position, this.name)
         }
 
         this.healthHandler(jaba)
