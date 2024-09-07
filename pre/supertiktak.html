@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="super.css">
+    <title>tiktaktoe</title>
+</head>
+<body>
+
+<div id="tiktaktoe"></div>
+<script>
+    class Jsml {
+        constructor() {
+        }
+
+        deleteChildren(victim) {
+            let e = victim;
+            let child = e.lastElementChild;
+            while (child) {
+                e.removeChild(child);
+                child = e.lastElementChild;
+            }
+        }
+
+        createHTMLElement(elementType, parent, text, tags, attributes, childrenArray) {
+            let e = document.createElement(elementType);
+
+            if (text){
+                if (tags === 'inside'){
+                    e.classList.add('tags')
+                    let tagOpen = document.createElement('strong');
+                    tagOpen.innerText = '<'+ elementType +'>';
+                    let tagClose = document.createElement('strong');
+                    tagClose.innerText = '</'+ elementType +'>';
+                    e.appendChild(tagOpen)
+                    e.innerHTML += text;
+                    e.appendChild(tagClose)
+                }else {
+                    e.innerHTML = text;
+                }
+                //     give it color
+                let textValue = e.innerHTML;
+                let coloredText = textValue.replace(/\b\d+\b/g, function(match) {
+                    return '<span class="number">' + match + '</span>';
+                });
+                e.innerHTML = coloredText;
+            }
+
+            // add attributes to element
+            if (attributes) {
+                const keys = Object.keys(attributes);
+                keys.forEach(key => {
+                    if (key === 'classList') {
+                        const classList = attributes[key].split(" ")
+                        classList.forEach(classItem => {
+                            e[key].add(classItem)
+                        })
+                    } else if (key === 'addEventListener') {
+                        e[key](attributes[key][0], attributes[key][1]);
+                    } else {
+                        e[key] = attributes[key];
+                    }
+                })
+            }
+
+            //append children
+            if (childrenArray) {
+                childrenArray.forEach(child => {
+                    if (Object.keys(child).length > 0) {
+                        let at = child[Object.keys(child)]['attributes'];
+                        console.log(at)
+                        this.createHTMLElement(Object.keys(child), e, false, false, at, child[Object.keys(child)]['children'])
+                    } else {
+                        e.appendChild(child)
+                    }
+                })
+            }
+            if (parent) {
+                if (tags === 'around'){
+                    let tagOpen = document.createElement('strong');
+                    tagOpen.innerText = '<'+ elementType +'>';
+                    let tagClose = document.createElement('strong');
+                    tagClose.innerText = '</'+ elementType +'>';
+                    let tagDiv = document.createElement('div');
+                    tagDiv.appendChild(tagOpen)
+                    tagDiv.appendChild(e)
+                    tagDiv.appendChild(tagClose)
+                    parent.appendChild(tagDiv)
+                    tagDiv.classList.add('tags-around')
+                    return tagDiv
+                }else {
+                    parent.appendChild(e)
+                    return e
+                }
+            }else {
+                if (tags === 'around'){
+                    let tagOpen = document.createElement('strong');
+                    tagOpen.innerText = '<'+ elementType +'>';
+                    let tagClose = document.createElement('strong');
+                    tagClose.innerText = '</'+ elementType +'>';
+                    let tagDiv = document.createElement('div');
+                    tagDiv.appendChild(tagOpen)
+                    tagDiv.appendChild(e)
+                    tagDiv.appendChild(tagClose)
+                    tagDiv.classList.add('tags-around')
+                    return tagDiv
+                }else {
+                    return e
+                }
+            }
+        }
+        elementFromHtml(html) {
+            const template = document.createElement("template");
+
+            template.innerHTML = html.trim();
+
+            return template.content.firstElementChild;
+        }
+    }
+    const jsml = new Jsml();
+
+
+    class TiktakComp{
+        constructor() {
+            this.parentDiv = document.getElementById('tiktaktoe');
+            this.matrix = [[1, 2, 1], [0, 2, 0], [1, 2, 1]];
+            this.matrix.map(row=>{
+                let rowDiv = jsml.createHTMLElement('div', this.parentDiv, '', 'none', {'classList':'row'});
+                row.map(col=>{
+                    let colDiv = jsml.createHTMLElement('div', rowDiv, col, 'none', {'classList':'col'});
+                    if (col === 1){
+                        colDiv.style.backgroundImage = "url('https://picsum.photos/100/100')";
+                    }else if (col === 2){
+                        colDiv.style.backgroundImage = "url('https://picsum.photos/101/101')";
+                    }
+                })
+            })
+
+        }
+
+
+        check4W(){
+            let win = false;
+        //    check horizontal
+            this.matrix.map(row=>{
+                if (!row.includes(0)){
+                    if(row[0] === row[1] && row[0] === row[2]){
+                        win = row[0]
+                    }
+                }
+            })
+
+        //    check vertical
+            for (let x = 0; x < this.matrix[0].length; x++) {
+                let col = [this.matrix[0][x], this.matrix[1][x], this.matrix[2][x]];
+                if (!col.includes(0)){
+                    if(this.matrix[0][x] === this.matrix[1][x] &&this.matrix[0][x] === this.matrix[2][x]){
+                        win = this.matrix[0][x];
+                    }
+                }
+            }
+
+            //    check diagonal
+            // left to right
+            if(this.matrix[0][0] === this.matrix[1][1] &&this.matrix[1][1] === this.matrix[2][2]){
+                win = this.matrix[0][0];
+            }
+            //right to left
+            if(this.matrix[0][2] === this.matrix[1][1] &&this.matrix[1][1] === this.matrix[2][0]){
+                win = this.matrix[0][2];
+            }
+            return win
+        }
+
+
+
+    }
+    const comp = new TiktakComp();
+    console.log(comp.check4W())
+</script>
+</div>
+</body>
+</html>

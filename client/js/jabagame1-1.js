@@ -2,13 +2,14 @@ let keysDown;
 let mousePos = {x:0, y:0};
 let mouseDown = [0, 0, 0]
 export class Init{
-    constructor(canvas, ctx) {
+    constructor(canvas, ctx, socket) {
         keysDown = {};
         this.ctx = ctx;
         this.width = canvas.width;
         this.height = canvas.height;
         this.cameraPosition = {'x':0, 'y':0};
         this.tick = 0;
+        this.socket = socket
 
         window.addEventListener("keydown", function (e) {
             keysDown[e.keyCode] = true;
@@ -36,6 +37,24 @@ export class Init{
         }
     }
 
+    smartSort(array, sortBy){
+        function dynamicSort(property) {
+            return function (a, b) {
+                if (a[property] < b[property]) {
+                    return -1;
+                } else if (a[property] > b[property]) {
+                    return 1;
+                } else {
+                    return 0;
+                }
+            };
+        }
+
+        let arraySorted = array.sort(dynamicSort(sortBy))
+        console.log(arraySorted)
+        return array
+    }
+
 
     keysDown(){return keysDown}
     mousePos(){return mousePos}
@@ -61,6 +80,10 @@ export class Rect{
     draw(){
         this.surface.fillStyle = this.color;
         this.surface.fillRect(this.x, this.y, this.width, this.height)
+    }
+    drawRelative(cameraPosition){
+        this.surface.fillStyle = this.color;
+        this.surface.fillRect(this.x + cameraPosition.x, this.y + cameraPosition.y, this.width, this.height)
     }
     rect(){
         return [this.x, this.y, this.width, this.height]
@@ -94,8 +117,13 @@ export class Text{
     }
 }
 export class Image{
-    constructor(surface, imageId) {
+    constructor(surface, imageId, x, y, width, height) {
         this.image = document.getElementById(imageId)
+        this.x = x;
+        this.y = y;
+        this.width = width;
+        this.height = height;
+
     }
     drawImage(surface, x, y, width, height){
         if (width === undefined){
@@ -103,5 +131,14 @@ export class Image{
         }else {
             surface.drawImage(this.image, x, y, width, height)
         }
+    }
+    //draw an image based on camera position
+    drawImageRelative(surface, cameraPosition){
+        if (this.width === undefined){
+            surface.drawImage(this.image, this.x + cameraPosition.x, this.y + cameraPosition.y)
+        }else {
+            surface.drawImage(this.image, this.x + cameraPosition.x, this.y + cameraPosition.y, this.width, this.height)
+        }
+
     }
 }
